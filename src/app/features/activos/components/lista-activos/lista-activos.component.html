@@ -1,0 +1,300 @@
+<div class="modulo-activos">
+
+  <div class="barra-superior" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h2>Inventario de Activos Tecnológicos</h2>
+
+    <div class="acciones-cabecera" style="display: flex; gap: 1rem;">
+      <button class="btn-consultar" (click)="cargarActivos()" [disabled]="cargandoLista()" style="background: #e0e0e0; color: #333; border: none; padding: 0.75rem 1.25rem; border-radius: 4px; font-weight: bold; cursor: pointer;">
+        {{ cargandoLista() ? 'Buscando...' : 'Consultar Todos' }}
+      </button>
+
+      <button class="btn-nuevo" (click)="abrirModal()" style="background: #1d5743; color: white; border: none; padding: 0.75rem 1.25rem; border-radius: 4px; font-weight: bold; cursor: pointer;">
+        + Registrar Nuevo Activo
+      </button>
+    </div>
+  </div>
+
+  <div [formGroup]="formFiltros" style="background-color: #f8f9fa; border: 1px solid #e3e6f0; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+
+    <h3 style="margin-top: 0; margin-bottom: 1.25rem; color: #1d5743; font-size: 1.15rem; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e3e6f0; padding-bottom: 0.5rem;">
+      <span>🔍</span> Panel de Búsqueda Avanzada Institucional
+    </h3>
+
+    <div style="margin-bottom: 1.25rem; background-color: #ffffff; padding: 1rem; border-left: 4px solid #1d5743; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <label style="display: block; font-weight: bold; margin-bottom: 0.5rem; color: #333; font-size: 0.9rem;">
+        Buscar por ID de Activo (Prioridad Absoluta / UUID)
+      </label>
+      <input
+        type="text"
+        formControlName="idActivo"
+        placeholder="Pegue el UUID del activo aquí... (ej: e3b0c442-98fc-1c14...)"
+        style="width: 100%; max-width: 500px; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-family: monospace; font-size: 0.9rem; box-sizing: border-box;">
+    </div>
+
+    <div style="text-align: center; margin: 1rem 0; color: #888; font-size: 0.8rem; font-weight: bold; position: relative;">
+      <span style="background: #f8f9fa; padding: 0 15px; position: relative; z-index: 2; letter-spacing: 1px;">Ó FILTRAR POR MULTI-CRITERIO</span>
+      <hr style="position: absolute; top: 50%; left: 0; right: 0; border: 0; border-top: 1px dashed #ced4da; margin: 0; z-index: 1;">
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: #555; font-size: 0.85rem;">Marca / Modelo</label>
+        <input
+          type="text"
+          formControlName="marcaModelo"
+          placeholder="Ej: Asus, Lenovo, Dell..."
+          style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: #555; font-size: 0.85rem;">Número de Serie</label>
+        <input
+          type="text"
+          formControlName="numeroSerie"
+          placeholder="Coincidencia exacta..."
+          style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; font-family: monospace; box-sizing: border-box;">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: #555; font-size: 0.85rem;">Estado Operativo</label>
+        <select
+          formControlName="estado"
+          style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; background-color: white; height: 38px; cursor: pointer; box-sizing: border-box;">
+          <option value="">-- Todos los Estados --</option>
+          @for (est of estadosDisponibles; track est) {
+            <option [value]="est">
+              {{ est === 'EN_MANTENIMIENTO' ? 'EN MANTENIMIENTO' : est }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: #555; font-size: 0.85rem;">Costo Desde ($)</label>
+        <input
+          type="number"
+          formControlName="costoDesde"
+          placeholder="Mínimo M.N."
+          style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; color: #555; font-size: 0.85rem;">Costo Hasta ($)</label>
+        <input
+          type="number"
+          formControlName="costoHasta"
+          placeholder="Máximo M.N."
+          style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; box-sizing: border-box;">
+      </div>
+
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid #e3e6f0; padding-top: 1rem;">
+
+      <button
+        type="button"
+        (click)="limpiarFiltros()"
+        [disabled]="cargandoLista() || generandoReporte()"
+        style="padding: 0.5rem 1.25rem; background-color: #6c757d; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">
+        🧹 Limpiar Filtros
+      </button>
+
+      <button
+        type="button"
+        (click)="descargarReporteInventario()"
+        [disabled]="cargandoLista() || generandoReporte()"
+        style="padding: 0.5rem 1.25rem; background-color: #0275d8; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(2,117,216,0.2);">
+        <span>{{ generandoReporte() ? '⏳ Compilando...' : '📦 Descargar ZIP' }}</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="ejecutarBusqueda()"
+        [disabled]="cargandoLista() || generandoReporte()"
+        style="padding: 0.5rem 1.5rem; background-color: #1d5743; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(29,87,67,0.2);">
+        🔍 Ejecutar Búsqueda
+      </button>
+
+    </div>
+
+  @if (exitoFilaMsg()) {
+    <div style="padding: 10px; margin-bottom: 1rem; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px; font-weight: 500;">
+      ✅ {{ exitoFilaMsg() }}
+    </div>
+  }
+
+  @if (errorFilaMsg()) {
+    <div style="padding: 10px; margin-bottom: 1rem; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px; font-weight: 600;">
+      ⚠️ Error institucional: {{ errorFilaMsg() }}
+    </div>
+  }
+
+  @if (cargandoLista()) {
+    <div class="cargando-contenedor" style="padding: 2rem; text-align: center; color: #666;">
+      <p>Cargando inventario institucional desde el backend...</p>
+    </div>
+  } @else {
+    <div class="tabla-contenedor">
+      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+        <tr style="border-bottom: 2px solid #1d5743; background-color: #f8f9fa;">
+          <th style="padding: 12px; font-weight: bold; color: #1d5743;">Folio</th>
+          <th style="padding: 12px; font-weight: bold; color: #1d5743;">Marca / Modelo</th>
+          <th style="padding: 12px; font-weight: bold; color: #1d5743;">Número de Serie</th>
+          <th style="padding: 12px; font-weight: bold; color: #1d5743;">Costo de Adquisición</th>
+          <th style="padding: 12px; font-weight: bold; color: #1d5743;">Estado</th>
+          <th style="padding: 12px; font-weight: bold; color: #1d5743; text-align: center;">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (activo of activos(); track activo.idActivo) {
+            <tr style="border-bottom: 1px solid #eee; transition: all 0.3s;"
+                [formGroup]="idFilaEnEdicion() === activo.idActivo ? formFila : formularioVacio"
+                [style.opacity]="idFilaEnEdicion() !== null && idFilaEnEdicion() !== activo.idActivo ? '0.4' : '1'"
+                [style.pointer-events]="idFilaEnEdicion() !== null && idFilaEnEdicion() !== activo.idActivo ? 'none' : 'auto'">
+
+              <td style="padding: 12px;"><strong>{{ activo.folioInventario }}</strong></td>
+
+              @if (idFilaEnEdicion() === activo.idActivo) {
+                <td style="padding: 6px;">
+                  <input type="text" formControlName="marcaModelo" style="width: 90%; padding: 6px; border: 1px solid #1d5743; border-radius: 4px;">
+                </td>
+                <td style="padding: 6px;">
+                  <input type="text" formControlName="numeroSerie" style="width: 90%; padding: 6px; border: 1px solid #1d5743; border-radius: 4px;">
+                </td>
+                <td style="padding: 6px;">
+                  <input type="number" formControlName="costoAdquisicion" style="width: 80%; padding: 6px; border: 1px solid #1d5743; border-radius: 4px;">
+                </td>
+
+                <td style="padding: 6px;">
+                  <select
+                    formControlName="estado"
+                    style="width: 100%; padding: 6px; border: 1px solid #1d5743; border-radius: 4px; background-color: white; font-weight: 600; color: #333; cursor: pointer;">
+                    @for (est of estadosDisponibles; track est) {
+                      <option [value]="est">
+                        {{ est === 'EN_MANTENIMIENTO' ? 'EN MANTENIMIENTO' : est }}
+                      </option>
+                    }
+                  </select>
+                </td>
+
+                <td style="padding: 12px; text-align: center;">
+                  <div style="display: flex; justify-content: center; gap: 12px;">
+                    <button type="button" (click)="guardarEdicionInline()" title="Guardar Cambios" [disabled]="guardando()" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+                      💾
+                    </button>
+                    <button type="button" (click)="cancelarEdicionInline()" title="Cancelar" [disabled]="guardando()" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #dc3545;">
+                      ❌
+                    </button>
+                  </div>
+                </td>
+              } @else {
+                <td style="padding: 12px;">{{ activo.marcaModelo }}</td>
+                <td style="padding: 12px;"><code>{{ activo.numeroSerie }}</code></td>
+                <td style="padding: 12px;">{{ activo.costoAdquisicion | currency:'MXN':'symbol' }}</td>
+                <td style="padding: 12px;">
+              <span [className]="'badge ' + activo.estado?.toLowerCase()">
+                {{ activo.estado === 'EN_MANTENIMIENTO' ? 'EN MANTENIMIENTO' : activo.estado }}
+              </span>
+                </td>
+                <td style="padding: 12px; text-align: center;">
+                  <button type="button" (click)="activarEdicionInline(activo)" [disabled]="idFilaEnEdicion() !== null" title="Editar" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #1d5743;">
+                    ✏️
+                  </button>
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="sin-datos" style="padding: 2rem; text-align: center; color: #777;">
+                No hay activos tecnológicos registrados en este momento.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="paginacion-controles" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+
+      <button
+        class="btn-pag"
+        (click)="paginaAnterior()"
+        [disabled]="esPrimeraPagina() || cargandoLista()"
+        style="padding: 0.5rem 1rem; background: #1d5743; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+        &lt; Anterior
+      </button>
+
+      <span style="font-size: 0.95rem; font-weight: 600; color: #555;">
+    Página {{ paginaActual() + 1 }}
+  </span>
+
+      <button
+        class="btn-pag"
+        (click)="paginaSiguiente()"
+        [disabled]="esUltimaPagina() || cargandoLista()"
+        style="padding: 0.5rem 1rem; background: #1d5743; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+        Siguiente &gt;
+      </button>
+
+    </div>
+  }
+
+  @if (mostrarFormulario()) {
+    <div class="modal-backdrop">
+      <div class="modal-tarjeta">
+
+        <div class="modal-cabecera">
+          <h3>Alta de Activo Tecnológico</h3>
+          <button class="btn-cerrar-X" (click)="cerrarModal()">&times;</button>
+        </div>
+
+        @if (errorFormMsg()) { <div class="alerta error">{{ errorFormMsg() }}</div> }
+        @if (exitoFormMsg()) { <div class="alerta exito">{{ exitoFormMsg() }}</div> }
+
+        <form [formGroup]="formularioActivo" (ngSubmit)="guardarNuevoActivo()">
+
+          <div class="grupo-input">
+            <label for="idCategoria">Categoría Institucional *</label>
+            <select id="idCategoria" formControlName="idCategoria"
+                    [class.invalido]="formularioActivo.get('idCategoria')?.touched && formularioActivo.get('idCategoria')?.invalid">
+              <option value="" disabled selected>Seleccione...</option>
+              @for (cat of categorias(); track cat.idCategoria) {
+                <option [value]="cat.idCategoria">{{ cat.nombreCategoria }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="grupo-input">
+            <label for="numeroSerie">Número de Serie *</label>
+            <input id="numeroSerie" type="text" formControlName="numeroSerie" placeholder="ej. SN-MX8902"
+                   [class.invalido]="formularioActivo.get('numeroSerie')?.touched && formularioActivo.get('numeroSerie')?.invalid" />
+          </div>
+
+          <div class="grupo-input">
+            <label for="marcaModelo">Marca y Modelo *</label>
+            <input id="marcaModelo" type="text" formControlName="marcaModelo" placeholder="ej. Dell Latitude 5440"
+                   [class.invalido]="formularioActivo.get('marcaModelo')?.touched && formularioActivo.get('marcaModelo')?.invalid" />
+          </div>
+
+          <div class="grupo-input">
+            <label for="costoAdquisicion">Costo ($ MXN) *</label>
+            <input id="costoAdquisicion" type="number" step="0.01" formControlName="costoAdquisicion"
+                   [class.invalido]="formularioActivo.get('costoAdquisicion')?.touched && formularioActivo.get('costoAdquisicion')?.invalid" />
+          </div>
+
+          <div class="modal-pie">
+            <button type="button" class="btn-secundario" (click)="cerrarModal()" [disabled]="guardando()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primario" [disabled]="guardando()">
+              {{ guardando() ? 'Guardando...' : 'Guardar Activo' }}
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,41 @@
+<div class="contenedor-login">
+  <div class="tarjeta-login">
+    <div class="logo-placeholder">IMSS</div>
+    <h3>Control de Activos Tecnológicos</h3>
+    <p class="subtitulo">Inicie sesión con sus credenciales institucionales</p>
+
+    @if (errorMsg()) {
+      <div class="alerta-error">
+        {{ errorMsg() }}
+      </div>
+    }
+
+    <form [formGroup]="formularioLogin" (ngSubmit)="ejecutarLogin()">
+      <div class="grupo-control">
+        <label for="username">Usuario</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="ej. admin"
+          [class.invalido]="formularioLogin.get('username')?.touched && formularioLogin.get('username')?.invalid"
+        />
+      </div>
+
+      <div class="grupo-control">
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          [class.invalido]="formularioLogin.get('password')?.touched && formularioLogin.get('password')?.invalid"
+        />
+      </div>
+
+      <button type="submit" [disabled]="cargando()" class="btn-entrar">
+        {{ cargando() ? 'Verificando firma RSA...' : 'Acceder al Sistema' }}
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,104 @@
+.contenedor-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f1f5f9;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+
+  .tarjeta-login {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+
+    .logo-placeholder {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #15803d; // Verde IMSS institucional
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+
+    h3 {
+      margin: 0 0 6px 0;
+      color: #1e293b;
+      font-size: 1.3rem;
+    }
+
+    .subtitulo {
+      margin: 0 0 24px 0;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .alerta-error {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+      border: 1px solid #fca5a5;
+    }
+
+    .grupo-control {
+      text-align: left;
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        font-size: 0.85rem;
+        color: #475569;
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: #15803d;
+        }
+
+        &.invalido {
+          border-color: #ef4444;
+          background-color: #fef2f2;
+        }
+      }
+    }
+
+    .btn-entrar {
+      width: 100%;
+      background-color: #15803d;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 10px;
+
+      &:hover {
+        background-color: #166534;
+      }
+
+      &:disabled {
+        background-color: #94a3b8;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
